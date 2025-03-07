@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvVendorDataToXls", "TVVendorDataToXls\TvVendorDataToXls.csproj", "{DD1FDA12-CB20-42AB-97B3-11B68481672A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassiveRenameTool", "MassiveRenameTool\MassiveRenameTool.csproj", "{CE4A4C76-70E7-441A-982D-EB214C2CA5BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvDataExport", "TvDataExport\TvDataExport.csproj", "{F36D8473-7FF7-4417-A5CB-344458E92594}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD1FDA12-CB20-42AB-97B3-11B68481672A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD1FDA12-CB20-42AB-97B3-11B68481672A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD1FDA12-CB20-42AB-97B3-11B68481672A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD1FDA12-CB20-42AB-97B3-11B68481672A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE4A4C76-70E7-441A-982D-EB214C2CA5BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE4A4C76-70E7-441A-982D-EB214C2CA5BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE4A4C76-70E7-441A-982D-EB214C2CA5BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE4A4C76-70E7-441A-982D-EB214C2CA5BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F36D8473-7FF7-4417-A5CB-344458E92594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F36D8473-7FF7-4417-A5CB-344458E92594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F36D8473-7FF7-4417-A5CB-344458E92594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F36D8473-7FF7-4417-A5CB-344458E92594}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

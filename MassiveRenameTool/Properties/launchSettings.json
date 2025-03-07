@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "MassiveRenameTool": {
+      "commandName": "Project",
+      "commandLineArgs": "--path \"C:\\Users\\moder\\Downloads\\Telegram Desktop\\HARPER_43F670TS_HK.T.RT2842P639_PT430CT02_Hyunix\\43f670ts\""
+    },
+    "Profile 1": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "TVVendorDataToXls": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\moder\\Downloads\\Telegram Desktop\\rt51ks\\panel\" --panel"
+    },
+    "debug model": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\moder\\Downloads\\Telegram Desktop\\TPD.RT2841.PB772-1920x1080-TCL\\TPD.RT2841.PB772-1920x1080-TCL\\V8-R41KT01-LF1V229.007496\\model\" --model"
+    },
+    "debug ini": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\moder\\Downloads\\Telegram Desktop\\V8-T841TNF-LF1V932-CTS\\model\" --ini"
+    }
+  }
+}
