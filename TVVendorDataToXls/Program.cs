@@ -19,7 +19,7 @@ public class Program
 
     public static void Main(string[] args)
     {
-        TvDataExport tvExport = new TvDataExport();
+        TvDataExportManager tvExport = new TvDataExportManager();
 
         if (args.Length == 0)
         {

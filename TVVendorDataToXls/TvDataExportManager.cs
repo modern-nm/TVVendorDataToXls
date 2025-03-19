@@ -7,8 +7,11 @@ using System.Text.Json;
 
 namespace TvVendorDataToXls
 {
-    public class TvDataExport
+    public class TvDataExportManager
     {
+        public delegate void AccountHandler(AccountEventArgs accountEventArgs);
+        public event AccountHandler Notify;
+
         private List<string>? keysToBeExported;
         private readonly string ExtsToProcess = ".ini";
         private readonly JsonSerializerOptions p_readOptions = new()
@@ -21,26 +24,57 @@ namespace TvVendorDataToXls
             WriteIndented = true
         };
 
+        public int GetFilesCount(string path)
+        {
+            int result = 0;
+            List<Dictionary<string, Dictionary<string, string>>> pairsList = new();
+
+            DirectoryInfo di = new DirectoryInfo(path);
+            foreach (FileInfo fi in di.GetFiles())
+            {
+                if (!CheckFileExt(fi.Extension, ExtsToProcess))
+                    continue;
+                result++;
+            }
+            return result;
+        }
+
         public void GetKeysToBeExported()
         {
-            keysToBeExported =
-            [
-                "FILENAME",
-                "PROJECT_NAME",
-                "RCU_NAME",
-                "PANEL_NAME",
-                "PSU_NAME",
-                "REGION_NAME",
-                "CHASSIS_NAME",
-                "MANUFACTURER_NAME",
-                "TCL_LOCAL_KEYBOARD",
-                "inputSource",
-                "ST_AMP_SELECTION",
-                "ST_AMP_SUB_SELECTION",
-                "DOLBY_AUDIO",
-                "DOLBY_AUDIO_FEATURE",
-                "CLIENT_TYPE",
-            ];
+            try
+            {
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KeysToExport.json");
+                keysToBeExported = JsonSerializer.Deserialize<List<string>?>(path, p_readOptions);
+            }
+            catch (Exception)
+            {
+                keysToBeExported =
+                [
+                    "FILENAME",
+                    "PROJECT_NAME",
+                    "RCU_NAME",
+                    "PANEL_NAME",
+                    "PSU_NAME",
+                    "REGION_NAME",
+                    "CHASSIS_NAME",
+                    "MANUFACTURER_NAME",
+                    "TCL_LOCAL_KEYBOARD",
+                    "inputSource",
+                    "ST_AMP_SELECTION",
+                    "ST_AMP_SUB_SELECTION",
+                    "DOLBY_AUDIO",
+                    "DOLBY_AUDIO_FEATURE",
+                    "CLIENT_TYPE",
+                ];
+                /// implement Event doing some with errors.
+                /// 
+
+
+                throw;
+            }
+            
+            
+            
         }
 
         public void ConvertIniToXls(string path)
@@ -292,7 +326,9 @@ namespace TvVendorDataToXls
                     exceptions.Add(e);
                     exceptionFiles.Add(fi.FullName);
                     Console.WriteLine($"{fi.FullName}........{e.Message}");
+                    Notify?.Invoke(new AccountEventArgs($"{fi.FullName}........{e.Message}", ManagerEventType.Error));
                 }
+                Notify?.Invoke(new AccountEventArgs("", ManagerEventType.Message));
             }
             WriteModelXls(tvModelInfoList);
             Console.ForegroundColor = ConsoleColor.Red;
@@ -579,6 +615,25 @@ namespace TvVendorDataToXls
         }
     }
 
+    public class AccountEventArgs
+    {
+        // Сообщение
+        public string Message { get; }
+        // Сумма, на которую изменился счет
+        public ManagerEventType Type { get; }
+        public AccountEventArgs(string message, ManagerEventType type)
+        {
+            Message = message;
+            Type = type;
+        }
+    }
+
+    public enum ManagerEventType
+    {
+        Error = 0,
+        Message = 1
+    }
+
     public class PanelInfo
     {
         public string Filename { get; set; }
@@ -630,7 +685,7 @@ namespace TvVendorDataToXls
 
         [ExportToXls(true)]
         public string CHASSIS_NAME { get; set; }
-
+        [ExportToXls(true)]
         public string LOGO_PATH { get; set; }
 
         public int LOGO_BRIGHTER { get; set; }

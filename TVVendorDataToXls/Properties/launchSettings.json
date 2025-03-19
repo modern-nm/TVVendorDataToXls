@@ -6,7 +6,7 @@
     },
     "debug model": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\moder\\Downloads\\Telegram Desktop\\TPD.RT2841.PB772-1920x1080-TCL\\TPD.RT2841.PB772-1920x1080-TCL\\V8-R41KT01-LF1V229.007496\\model\" --model"
+      "commandLineArgs": "\"C:\\Users\\moder\\Downloads\\Telegram Desktop\\model\\model\" --model"
     },
     "debug ini": {
       "commandName": "Project",
