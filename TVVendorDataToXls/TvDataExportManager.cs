@@ -44,7 +44,8 @@ namespace TvVendorDataToXls
             try
             {
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KeysToExport.json");
-                keysToBeExported = JsonSerializer.Deserialize<List<string>?>(path, p_readOptions);
+                string text = File.ReadAllText(path);
+                keysToBeExported = JsonSerializer.Deserialize<List<string>?>(text, p_readOptions);
             }
             catch (Exception)
             {

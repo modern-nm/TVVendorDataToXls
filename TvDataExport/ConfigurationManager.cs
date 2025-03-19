@@ -18,6 +18,13 @@ namespace TvDataExport
 
         public Config GetConfiguration()
         {
+            JsonSerializerOptions p_readOptions = new()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseUpper,
+                WriteIndented = true
+            };
+
+
             var config = new Config();
             var fileExtsToProcess = ConfigurationManager.AppSettings["fileExtsToProcess"];
 
@@ -29,7 +36,9 @@ namespace TvDataExport
             if (bool.TryParse(ConfigurationManager.AppSettings["setFieldsToBeExported"], out setFieldsToBeExported))
                 config.SetFieldsToBeExported = setFieldsToBeExported;
 
-
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KeysToExport.json");
+            string text = File.ReadAllText(path);
+            config.KeysToExport = JsonSerializer.Deserialize<List<string>?>(text, p_readOptions);
 
             return config;
         }
@@ -48,7 +57,7 @@ namespace TvDataExport
                         </configuration>";
             File.WriteAllText(ConfigFilename, text);
             var keysToExport = new List<string>() { "FILENAME", "PROJECT_NAME", "RCU_NAME", "PANEL_NAME", "PSU_NAME", "REGION_NAME", "CHASSIS_NAME", "MANUFACTURER_NAME", "TCL_LOCAL_KEYBOARD", "inputSource", "ST_AMP_SELECTION", "ST_AMP_SUB_SELECTION", "DOLBY_AUDIO", "DOLBY_AUDIO_FEATURE", "CLIENT_TYPE" };
-            text = JsonSerializer.Serialize(keysToExport);
+            text = JsonSerializer.Serialize(keysToExport, new JsonSerializerOptions() { WriteIndented = true });
             File.WriteAllText(KeysToExportFilename, text);
         }
     }
