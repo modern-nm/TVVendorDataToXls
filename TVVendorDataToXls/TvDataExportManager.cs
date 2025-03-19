@@ -65,16 +65,11 @@ namespace TvVendorDataToXls
                     "DOLBY_AUDIO",
                     "DOLBY_AUDIO_FEATURE",
                     "CLIENT_TYPE",
+                    "PowerLogoPath"
                 ];
                 /// implement Event doing some with errors.
                 /// 
-
-
-                throw;
             }
-            
-            
-            
         }
 
         public void ConvertIniToXls(string path)
@@ -89,6 +84,7 @@ namespace TvVendorDataToXls
                 var pairs = ParseIniFile(fi.FullName);
                 pairs.First().Value.Add("FILENAME", CutPanelFilename(fi.Name));
                 pairsList.Add(pairs);
+                Notify?.Invoke(new AccountEventArgs("", ManagerEventType.Message));
             }
             WriteIniDataToXls(pairsList);
 
@@ -268,7 +264,9 @@ namespace TvVendorDataToXls
                     exceptions.Add(e);
                     exceptionFiles.Add(fi.FullName);
                     Console.WriteLine($"{fi.FullName}........{e.Message}");
+                    Notify?.Invoke(new AccountEventArgs($"{fi.FullName}........{e.Message}", ManagerEventType.Error));
                 }
+                Notify?.Invoke(new AccountEventArgs("", ManagerEventType.Message));
             }
             WritePanelXls(tvInfoList);
             Console.ForegroundColor = ConsoleColor.Red;

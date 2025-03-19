@@ -29,9 +29,11 @@ namespace TvDataExport
             if (bool.TryParse(ConfigurationManager.AppSettings["setFieldsToBeExported"], out setFieldsToBeExported))
                 config.SetFieldsToBeExported = setFieldsToBeExported;
 
+
+
             return config;
         }
-        public void WriteConfiguration()
+        public void SaveConfiguration()
         {
 
         }
@@ -45,8 +47,9 @@ namespace TvDataExport
 	                        </appSettings>
                         </configuration>";
             File.WriteAllText(ConfigFilename, text);
-
-
+            var keysToExport = new List<string>() { "FILENAME", "PROJECT_NAME", "RCU_NAME", "PANEL_NAME", "PSU_NAME", "REGION_NAME", "CHASSIS_NAME", "MANUFACTURER_NAME", "TCL_LOCAL_KEYBOARD", "inputSource", "ST_AMP_SELECTION", "ST_AMP_SUB_SELECTION", "DOLBY_AUDIO", "DOLBY_AUDIO_FEATURE", "CLIENT_TYPE" };
+            text = JsonSerializer.Serialize(keysToExport);
+            File.WriteAllText(KeysToExportFilename, text);
         }
     }
 
@@ -54,6 +57,7 @@ namespace TvDataExport
     {
         public bool SetFieldsToBeExported { get; set; } = true;
         public string FileExtsToProcess { get; set; } = ".ini";
+        public List<string>? KeysToExport { get; set; }
     }
 }
 
