@@ -10,7 +10,7 @@ namespace TvVendorDataToXls
     public class TvDataExportManager
     {
         public delegate void AccountHandler(AccountEventArgs accountEventArgs);
-        public event AccountHandler Notify;
+        public event AccountHandler? Notify;
 
         private List<string>? keysToBeExported;
         private readonly string ExtsToProcess = ".ini";
