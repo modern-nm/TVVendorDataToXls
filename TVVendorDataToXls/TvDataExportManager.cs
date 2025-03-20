@@ -140,35 +140,49 @@ namespace TvVendorDataToXls
                     foreach (var item in pairsList) //list
                     {
                         Row row = new Row();
-                        foreach (var pair in item) // [Ini]
+                        foreach (var col in columns)
                         {
-                            foreach (var pair1 in pair.Value)
+                            bool keyFound = false;
+                            foreach (var pair in item) // [Ini]
                             {
-                                if (columns.Contains(pair1.Key))
+                                foreach (var pair1 in pair.Value)
                                 {
-                                    Cell cell = new Cell();
-                                    cell.DataType = CellValues.String;
-                                    try
+                                    if (col == pair1.Key)
                                     {
-                                        var propValue = pair1.Value;
-
-                                        if (propValue != null)
+                                        keyFound = true;
+                                        Cell cell = new Cell();
+                                        cell.DataType = CellValues.String;
+                                        try
                                         {
-                                            cell.CellValue = new CellValue(pair1.Value);
-                                        }
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        cell.CellValue = new CellValue("ERROR");
-                                        Console.WriteLine($" value is null");
-                                    }
-                                    row.AppendChild(cell);
+                                            var propValue = pair1.Value;
 
+                                            if (propValue != null)
+                                            {
+                                                cell.CellValue = new CellValue(pair1.Value);
+                                            }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            cell.CellValue = new CellValue("ERROR");
+                                            Console.WriteLine($" value is null");
+                                        }
+                                        row.AppendChild(cell);
+
+                                    }
                                 }
                             }
+                            if (!keyFound)
+                            {
+                                Cell cell = new Cell();
+                                cell.DataType = CellValues.String;
+                                cell.CellValue = new CellValue("NOT FOUND");
+                                row.AppendChild(cell);
+                            }    
+                            
                         }
                         sheetData.AppendChild(row);
                     }
+                    ///
 
                     workbookPart.Workbook.Save();
                 }
