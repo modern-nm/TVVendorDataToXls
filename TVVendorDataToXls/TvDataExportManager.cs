@@ -12,6 +12,8 @@ namespace TvVendorDataToXls
         public delegate void AccountHandler(AccountEventArgs accountEventArgs);
         public event AccountHandler? Notify;
 
+        public string DirectoryPath = "";
+
         private List<string>? keysToBeExported;
         private readonly string ExtsToProcess = ".ini";
         private readonly JsonSerializerOptions p_readOptions = new()
@@ -75,7 +77,8 @@ namespace TvVendorDataToXls
 
         public void ConvertIniToXls(string path)
         {
-            List<Dictionary<string, Dictionary<string, string>>> pairsList = new();
+            DirectoryPath = path;
+            List <Dictionary<string, Dictionary<string, string>>> pairsList = new();
 
             DirectoryInfo di = new DirectoryInfo(path);
             foreach (FileInfo fi in di.GetFiles())
@@ -109,7 +112,8 @@ namespace TvVendorDataToXls
                     }
                 }
 #endif
-                using (SpreadsheetDocument document = SpreadsheetDocument.Create("TvData.xlsx", SpreadsheetDocumentType.Workbook))
+                string filePath = Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_ini_data.xlsx");
+                using (SpreadsheetDocument document = SpreadsheetDocument.Create(filePath, SpreadsheetDocumentType.Workbook))
                 {
                     WorkbookPart workbookPart = document.AddWorkbookPart();
                     workbookPart.Workbook = new Workbook();
@@ -249,6 +253,7 @@ namespace TvVendorDataToXls
 
         public void ConvertJsonPanelToXls(string path)
         {
+            DirectoryPath = path;
             List<Exception> exceptions = new List<Exception>();
             List<string> exceptionFiles = new List<string>();
 
@@ -296,6 +301,7 @@ namespace TvVendorDataToXls
 
         public void ConvertJsonModelToXls(string path)
         {
+            DirectoryPath = path;
             List<Exception> exceptions = new List<Exception>();
             List<string> exceptionFiles = new List<string>();
 
@@ -356,7 +362,8 @@ namespace TvVendorDataToXls
 
         private void WritePanelXls(List<PanelInfo> tvInfoList)
         {
-            using (SpreadsheetDocument document = SpreadsheetDocument.Create("PanelData.xlsx", SpreadsheetDocumentType.Workbook))
+            string filePath = Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_panel_data.xlsx");
+            using (SpreadsheetDocument document = SpreadsheetDocument.Create(filePath, SpreadsheetDocumentType.Workbook))
             {
                 WorkbookPart workbookPart = document.AddWorkbookPart();
                 workbookPart.Workbook = new Workbook();
@@ -420,7 +427,8 @@ namespace TvVendorDataToXls
         }
         private void WriteModelXls(List<Root> tvInfoList)
         {
-            using (SpreadsheetDocument document = SpreadsheetDocument.Create("ModelInfo.xlsx", SpreadsheetDocumentType.Workbook))
+            string filePath = Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_model_data.xlsx");
+            using (SpreadsheetDocument document = SpreadsheetDocument.Create(filePath, SpreadsheetDocumentType.Workbook))
             {
                 WorkbookPart workbookPart = document.AddWorkbookPart();
                 workbookPart.Workbook = new Workbook();
