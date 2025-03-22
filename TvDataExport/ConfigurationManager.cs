@@ -56,7 +56,24 @@ namespace TvDataExport
 	                        </appSettings>
                         </configuration>";
             File.WriteAllText(ConfigFilename, text);
-            var keysToExport = new List<string>() { "FILENAME", "PROJECT_NAME", "RCU_NAME", "PANEL_NAME", "PSU_NAME", "REGION_NAME", "CHASSIS_NAME", "MANUFACTURER_NAME", "TCL_LOCAL_KEYBOARD", "inputSource", "ST_AMP_SELECTION", "ST_AMP_SUB_SELECTION", "DOLBY_AUDIO", "DOLBY_AUDIO_FEATURE", "CLIENT_TYPE" };
+            var keysToExport = new List<string>() {
+                    "FILENAME",
+                    "PROJECT_NAME",
+                    "RCU_NAME",
+                    "PANEL_NAME",
+                    "PSU_NAME",
+                    "REGION_NAME",
+                    "CHASSIS_NAME",
+                    "MANUFACTURER_NAME",
+                    "TCL_LOCAL_KEYBOARD",
+                    "inputSource",
+                    "ST_AMP_SELECTION",
+                    "ST_AMP_SUB_SELECTION",
+                    "DOLBY_AUDIO",
+                    "DOLBY_AUDIO_FEATURE",
+                    "CLIENT_TYPE",
+                    "PowerLogoPath" 
+            };
             text = JsonSerializer.Serialize(keysToExport, new JsonSerializerOptions() { WriteIndented = true });
             File.WriteAllText(KeysToExportFilename, text);
         }
