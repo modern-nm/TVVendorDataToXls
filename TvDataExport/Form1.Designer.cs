@@ -38,6 +38,7 @@
             exportModelRadioButton = new RadioButton();
             logRichTextBox = new RichTextBox();
             progressBar1 = new ProgressBar();
+            button1 = new Button();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
@@ -131,11 +132,22 @@
             progressBar1.Size = new Size(456, 23);
             progressBar1.TabIndex = 5;
             // 
+            // button1
+            // 
+            button1.Location = new Point(890, 59);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 6;
+            button1.Text = "Settings";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(815, 517);
+            ClientSize = new Size(1060, 517);
+            Controls.Add(button1);
             Controls.Add(progressBar1);
             Controls.Add(logRichTextBox);
             Controls.Add(groupBox1);
@@ -144,7 +156,7 @@
             Controls.Add(exportButton);
             Name = "Form1";
             SizeGripStyle = SizeGripStyle.Show;
-            Text = "Form1";
+            Text = "TvDataExport";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);
@@ -162,5 +174,6 @@
         private RadioButton exportModelRadioButton;
         private RichTextBox logRichTextBox;
         private ProgressBar progressBar1;
+        private Button button1;
     }
 }

@@ -1,11 +1,13 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
 using TvVendorDataToXls;
+using TvDataExport.Shared;
 
 namespace TvDataExport
 {
     public partial class Form1 : Form
     {
+        private Config Config;
         //private TvVendorDataToXls.TvDataExportManager ExportManager = new();
         public Form1()
         {
@@ -13,8 +15,15 @@ namespace TvDataExport
             //ExportManager.Notify += DisplayMessage;
             //ExportManager.Notify += ErrorMessage;
             ConfigManager configManager = new ConfigManager();
-            configManager.InitConfiguration();
-            configManager.GetConfiguration();
+            Config = configManager.GetConfiguration();
+
+            if (Config.KeysToExport == null)
+            {
+                configManager.InitConfiguration();
+                Config = configManager.GetConfiguration();
+            }
+
+
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -59,6 +68,12 @@ namespace TvDataExport
             {
                 logRichTextBox.Text += accountEventArgs.Message;
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var form = new CheckboxForm();
+            form.ShowDialog(); // Открывает в отдельном окне
         }
     }
 }

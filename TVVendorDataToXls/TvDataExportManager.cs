@@ -14,7 +14,7 @@ namespace TvVendorDataToXls
 
         public string DirectoryPath = "";
 
-        private List<string>? keysToBeExported;
+        private List<string>? KeysToBeExported;
         private readonly string ExtsToProcess = ".ini";
         private readonly JsonSerializerOptions p_readOptions = new()
         {
@@ -47,11 +47,11 @@ namespace TvVendorDataToXls
             {
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KeysToExport.json");
                 string text = File.ReadAllText(path);
-                keysToBeExported = JsonSerializer.Deserialize<List<string>?>(text, p_readOptions);
+                KeysToBeExported = JsonSerializer.Deserialize<List<string>?>(text, p_readOptions);
             }
             catch (Exception)
             {
-                keysToBeExported =
+                KeysToBeExported =
                 [
                     "FILENAME",
                     "PROJECT_NAME",
@@ -97,7 +97,7 @@ namespace TvVendorDataToXls
 
         private void WriteIniDataToXls(List<Dictionary<string, Dictionary<string, string>>> pairsList)
         {
-            if (keysToBeExported != null)
+            if (KeysToBeExported != null)
             {
 #if DEBUG
                 foreach (var item in pairsList) //list
@@ -106,7 +106,7 @@ namespace TvVendorDataToXls
                     {
                         foreach (var pair1 in pair.Value)
                         {
-                            if (keysToBeExported.Contains(pair1.Key))
+                            if (KeysToBeExported.Contains(pair1.Key))
                                 Console.WriteLine($"{pair1.Key} = {pair1.Value}");
                         }
                     }
@@ -131,7 +131,7 @@ namespace TvVendorDataToXls
 
                     List<String> columns = new List<string>();
 
-                    foreach (var key in keysToBeExported) // шапка
+                    foreach (var key in KeysToBeExported) // шапка
                     {
                         columns.Add(key);
                         Cell cell = new Cell();
@@ -698,7 +698,7 @@ namespace TvVendorDataToXls
 
         [ExportToXls(true)]
         public string RCU_TYPE { get; set; }
-
+        [ExportToXls(true)]
         public string PSU_TYPE { get; set; }
 
         [ExportToXls(true)]
@@ -749,6 +749,7 @@ namespace TvVendorDataToXls
     {
         [ExportToXls(true)]
         public Dictionary<string, string> SOURCE_SUPPORT { get; set; }
+        [ExportToXls(true)]
         public List<string> HARDWARE_SUPPORT { get; set; }
         public List<string> COUNTRY { get; set; }
         public List<string> LANGUAGE { get; set; }
