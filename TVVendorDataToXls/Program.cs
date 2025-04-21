@@ -38,7 +38,7 @@ public class Program
                 tvExport.ConvertJsonPanelToXls(args[0]);
             if (args.Contains("--ini"))
             {
-                tvExport.GetKeysToBeExported();
+                //tvExport.GetKeysToBeExported();
                 tvExport.ConvertIniToXls(args[0]);
             }
 

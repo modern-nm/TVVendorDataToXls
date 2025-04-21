@@ -53,7 +53,7 @@ namespace TvDataExport
                 return;
             if (exportIniRadioButton.Checked)
             {
-                ExportManager.GetKeysToBeExported();
+                //ExportManager.GetKeysToBeExported();
                 ExportManager.ConvertIniToXls(textBox1.Text);
             }
             if (exportPanelRadioButton.Checked)

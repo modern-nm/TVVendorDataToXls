@@ -4,18 +4,20 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using TvDataExport.Shared;
 
 namespace TvVendorDataToXls
 {
     public class TvDataExportManager
     {
+        private readonly Config Config;
         public delegate void AccountHandler(AccountEventArgs accountEventArgs);
         public event AccountHandler? Notify;
 
         public string DirectoryPath = "";
 
-        private List<string>? KeysToBeExported;
-        private readonly string ExtsToProcess = ".ini";
+        //private List<string>? KeysToBeExported;
+        //private readonly string ExtsToProcess = ".ini";
         private readonly JsonSerializerOptions p_readOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseUpper,
@@ -25,7 +27,15 @@ namespace TvVendorDataToXls
         {
             WriteIndented = true
         };
-
+        public TvDataExportManager(Config config)
+        {
+            Config = config;
+        }
+        public TvDataExportManager()
+        {
+            ConfigManager configManager = new ConfigManager();
+            Config = configManager.GetConfiguration();
+        }
         public int GetFilesCount(string path)
         {
             int result = 0;
@@ -34,45 +44,56 @@ namespace TvVendorDataToXls
             DirectoryInfo di = new DirectoryInfo(path);
             foreach (FileInfo fi in di.GetFiles())
             {
-                if (!CheckFileExt(fi.Extension, ExtsToProcess))
+                if (!CheckFileExt(fi.Extension, Config.FileExtsToProcess))
                     continue;
                 result++;
             }
             return result;
         }
 
-        public void GetKeysToBeExported()
+        //public void GetKeysToBeExported()
+        //{
+        //    try
+        //    {
+        //        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KeysToExport.json");
+        //        string text = File.ReadAllText(path);
+        //        KeysToBeExported = JsonSerializer.Deserialize<List<string>?>(text, p_readOptions);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        KeysToBeExported =
+        //        [
+        //            "FILENAME",
+        //            "PROJECT_NAME",
+        //            "RCU_NAME",
+        //            "PANEL_NAME",
+        //            "PSU_NAME",
+        //            "REGION_NAME",
+        //            "CHASSIS_NAME",
+        //            "MANUFACTURER_NAME",
+        //            "TCL_LOCAL_KEYBOARD",
+        //            "inputSource",
+        //            "ST_AMP_SELECTION",
+        //            "ST_AMP_SUB_SELECTION",
+        //            "DOLBY_AUDIO",
+        //            "DOLBY_AUDIO_FEATURE",
+        //            "CLIENT_TYPE",
+        //            "PowerLogoPath"
+        //        ];
+        //        /// implement Event doing some with errors.
+        //        /// 
+        //    }
+        //}
+        public List<string> GetKeylist()
         {
-            try
-            {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KeysToExport.json");
-                string text = File.ReadAllText(path);
-                KeysToBeExported = JsonSerializer.Deserialize<List<string>?>(text, p_readOptions);
-            }
-            catch (Exception)
-            {
-                KeysToBeExported =
-                [
-                    "FILENAME",
-                    "PROJECT_NAME",
-                    "RCU_NAME",
-                    "PANEL_NAME",
-                    "PSU_NAME",
-                    "REGION_NAME",
-                    "CHASSIS_NAME",
-                    "MANUFACTURER_NAME",
-                    "TCL_LOCAL_KEYBOARD",
-                    "inputSource",
-                    "ST_AMP_SELECTION",
-                    "ST_AMP_SUB_SELECTION",
-                    "DOLBY_AUDIO",
-                    "DOLBY_AUDIO_FEATURE",
-                    "CLIENT_TYPE",
-                    "PowerLogoPath"
-                ];
-                /// implement Event doing some with errors.
-                /// 
-            }
+            List<string> result = new();
+            if (Config.KeysToExport != null)
+                foreach (var item in Config.KeysToExport)
+                {
+                    if (item.IsChecked)
+                        result.Add(item.Label);
+                }
+            return result;
         }
 
         public void ConvertIniToXls(string path)
@@ -83,7 +104,7 @@ namespace TvVendorDataToXls
             DirectoryInfo di = new DirectoryInfo(path);
             foreach (FileInfo fi in di.GetFiles())
             {
-                if (!CheckFileExt(fi.Extension, ExtsToProcess))
+                if (!CheckFileExt(fi.Extension, Config.FileExtsToProcess))
                     continue;
                 var pairs = ParseIniFile(fi.FullName);
                 pairs.First().Value.Add("FILENAME", CutPanelFilename(fi.Name));
@@ -97,7 +118,8 @@ namespace TvVendorDataToXls
 
         private void WriteIniDataToXls(List<Dictionary<string, Dictionary<string, string>>> pairsList)
         {
-            if (KeysToBeExported != null)
+            var keyList = GetKeylist();
+            if (Config.KeysToExport != null)
             {
 #if DEBUG
                 foreach (var item in pairsList) //list
@@ -106,7 +128,7 @@ namespace TvVendorDataToXls
                     {
                         foreach (var pair1 in pair.Value)
                         {
-                            if (KeysToBeExported.Contains(pair1.Key))
+                            if (keyList.Contains(pair1.Key))
                                 Console.WriteLine($"{pair1.Key} = {pair1.Value}");
                         }
                     }
@@ -131,12 +153,12 @@ namespace TvVendorDataToXls
 
                     List<String> columns = new List<string>();
 
-                    foreach (var key in KeysToBeExported) // шапка
+                    foreach (var key in Config.KeysToExport) // шапка
                     {
-                        columns.Add(key);
+                        columns.Add(key.Label);
                         Cell cell = new Cell();
                         cell.DataType = CellValues.String;
-                        cell.CellValue = new CellValue(key);
+                        cell.CellValue = new CellValue(key.Label);
                         headerRow.AppendChild(cell);
                     }
                     sheetData.AppendChild(headerRow);
@@ -261,7 +283,7 @@ namespace TvVendorDataToXls
             DirectoryInfo di = new DirectoryInfo(path);
             foreach (var fi in di.GetFiles())
             {
-                if (!CheckFileExt(fi.Extension, ExtsToProcess))
+                if (!CheckFileExt(fi.Extension, Config.FileExtsToProcess))
                     continue;
                 var jsonString = ReadFile(path: fi.FullName);
                 try
@@ -309,7 +331,7 @@ namespace TvVendorDataToXls
             DirectoryInfo di = new DirectoryInfo(path);
             foreach (var fi in di.GetFiles())
             {
-                if (!CheckFileExt(fi.Extension, ExtsToProcess))
+                if (!CheckFileExt(fi.Extension, Config.FileExtsToProcess))
                     continue;
                 var jsonString = ReadFile(path: fi.FullName);
                 try

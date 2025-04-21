@@ -18,7 +18,7 @@ namespace TvDataExport
         private Config _config;
         private CheckBox? _lastRightClickedCheckBox;
         //private const string FilePath = "checkboxes.json";
-        private List<CheckboxItem> checkboxItems = new();
+        private List<KeyItem> checkboxItems = new();
 
         public CheckboxForm()
         {
@@ -42,13 +42,13 @@ namespace TvDataExport
 
         private void SaveCheckboxes()
         {
-            var newList = new List<CheckboxItem>();
+            var newList = new List<KeyItem>();
 
             foreach (var control in flowLayoutPanel1.Controls)
             {
-                if (control is CheckBox cb && cb.Tag is CheckboxItem item)
+                if (control is CheckBox cb && cb.Tag is KeyItem item)
                 {
-                    newList.Add(new CheckboxItem
+                    newList.Add(new KeyItem
                     {
                         Label = cb.Text,
                         IsChecked = cb.Checked
@@ -62,7 +62,7 @@ namespace TvDataExport
             File.WriteAllText("KeysToExport.json", json);
         }
 
-        private CheckBox CreateCheckboxControl(CheckboxItem item)
+        private CheckBox CreateCheckboxControl(KeyItem item)
         {
             var cb = new CheckBox
             {
@@ -75,7 +75,7 @@ namespace TvDataExport
 
             cb.CheckedChanged += (s, e) =>
             {
-                if (cb.Tag is CheckboxItem ci)
+                if (cb.Tag is KeyItem ci)
                     ci.IsChecked = cb.Checked;
             };
 
@@ -96,7 +96,7 @@ namespace TvDataExport
         {
             if (_lastRightClickedCheckBox == null) return;
 
-            if (_lastRightClickedCheckBox.Tag is CheckboxItem item)
+            if (_lastRightClickedCheckBox.Tag is KeyItem item)
             {
                 checkboxItems.Remove(item); // Удаляем из списка
                 flowLayoutPanel1.Controls.Remove(_lastRightClickedCheckBox); // Удаляем с формы
@@ -131,7 +131,7 @@ namespace TvDataExport
                 return;
             }
 
-            var newItem = new CheckboxItem { Label = newLabel, IsChecked = false };
+            var newItem = new KeyItem { Label = newLabel, IsChecked = false };
             checkboxItems.Add(newItem);
 
             var cb = CreateCheckboxControl(newItem);

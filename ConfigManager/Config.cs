@@ -10,6 +10,6 @@ namespace TvDataExport.Shared
     {
         public bool SetFieldsToBeExported { get; set; } = true;
         public string FileExtsToProcess { get; set; } = ".ini";
-        public List<CheckboxItem>? KeysToExport { get; set; }
+        public List<KeyItem>? KeysToExport { get; set; }
     }
 }

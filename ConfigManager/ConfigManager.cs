@@ -40,7 +40,7 @@ public class ConfigManager
         try
         {
             string text = File.ReadAllText(path);
-            config.KeysToExport = JsonSerializer.Deserialize<List<CheckboxItem>>(text, p_readOptions);
+            config.KeysToExport = JsonSerializer.Deserialize<List<KeyItem>>(text, p_readOptions);
         }
         catch (Exception)
         {
@@ -83,7 +83,7 @@ public class ConfigManager
             "CLIENT_TYPE",
             "PowerLogoPath"
         };
-        var keysToExport = new List<CheckboxItem>();
+        var keysToExport = new List<KeyItem>();
         foreach (var key in keys) 
         {
             keysToExport.Add(new() { Label = key, IsChecked = true });
