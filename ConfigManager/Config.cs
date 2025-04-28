@@ -10,6 +10,15 @@ namespace TvDataExport.Shared
     {
         public bool SetFieldsToBeExported { get; set; } = true;
         public string FileExtsToProcess { get; set; } = ".ini";
-        public List<KeyItem>? KeysToExport { get; set; }
+        public List<KeyItem> IniKeysToExport { get; set; }
+        public List<KeyItem> ModelKeysToExport { get; set; }
+
+        public Config()
+        {
+            IniKeysToExport = new List<KeyItem>();
+            ModelKeysToExport = new List<KeyItem>();
+        }
     }
+
+
 }

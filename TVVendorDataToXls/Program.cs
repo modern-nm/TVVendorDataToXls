@@ -1,16 +1,4 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Vml.Office;
-using System;
-using System.Data;
-using System.IO;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using TvVendorDataToXls;
+﻿using TvVendorDataToXls;
 
 public class Program
 {
@@ -33,8 +21,9 @@ public class Program
         else
         {
             if (args.Contains("--model"))
-                tvExport.ConvertJsonModelToXls(args[0]);
-            if (args.Contains("--panel"))
+                //tvExport.ConvertJsonModelToXls(args[0]);
+                tvExport.ConvertJsonModelToXls_NEW(args[0]);
+                if (args.Contains("--panel"))
                 tvExport.ConvertJsonPanelToXls(args[0]);
             if (args.Contains("--ini"))
             {

@@ -23,32 +23,73 @@ namespace TvDataExport
         public CheckboxForm()
         {
             InitializeComponent();
-            LoadCheckboxes();
+            InitCheckboxes();
         }
-
+        private void InitCheckboxes()
+        {
+            _config = _configManager.GetConfiguration();
+            ReloadFlow(flowLayoutPanelIni, _config.IniKeysToExport);
+            ReloadFlow(flowLayoutPanelModel, _config.ModelKeysToExport);
+        }
         private void LoadCheckboxes()
         {
             _config = _configManager.GetConfiguration();
 
-            if (_config?.KeysToExport == null)
-                return;
+            if (TabControlSettings.SelectedTab == tabPageIni)
+                ReloadFlow(flowLayoutPanelIni, _config.IniKeysToExport);
+            if (TabControlSettings.SelectedTab == tabPageModel)
+                ReloadFlow(flowLayoutPanelModel, _config.ModelKeysToExport);
+        }
+        private void ReloadFlow(FlowLayoutPanel panel, List<KeyItem> items)
+        {
+            panel.Controls.Clear();
 
-            foreach (var item in _config.KeysToExport)
+            foreach (var item in items)
             {
-                var cb = CreateCheckboxControl(item);
-                flowLayoutPanel1.Controls.Add(cb);
+                var cb = new CheckBox
+                {
+                    Text = item.Label,
+                    Checked = item.IsChecked,
+                    Tag = item
+                };
+
+                cb.CheckedChanged += (s, e) =>
+                {
+                    if (cb.Tag is KeyItem checkboxItem)
+                        checkboxItem.IsChecked = cb.Checked;
+                };
+
+                panel.Controls.Add(cb);
             }
         }
-
         private void SaveCheckboxes()
         {
-            var newList = new List<KeyItem>();
+            // Готовим данные с формы
+            var newItems = new List<KeyItem>();
+            FlowLayoutPanel panelToUse = null;
+            KeysType keysType;
 
-            foreach (var control in flowLayoutPanel1.Controls)
+            if (TabControlSettings.SelectedTab == tabPageIni)
+            {
+                panelToUse = flowLayoutPanelIni;
+                keysType = KeysType.Ini;
+            }
+            else if (TabControlSettings.SelectedTab == tabPageModel)
+            {
+                panelToUse = flowLayoutPanelModel;
+                keysType = KeysType.Model;
+            }
+            else
+            {
+                // Неподдерживаемая вкладка
+                return;
+            }
+
+            foreach (var control in panelToUse.Controls)
             {
                 if (control is CheckBox cb && cb.Tag is KeyItem item)
                 {
-                    newList.Add(new KeyItem
+                    newItems.Add(new KeyItem
                     {
                         Label = cb.Text,
                         IsChecked = cb.Checked
@@ -56,10 +97,8 @@ namespace TvDataExport
                 }
             }
 
-            _config.KeysToExport = newList;
-
-            string json = JsonSerializer.Serialize(newList, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("KeysToExport.json", json);
+            // Теперь сохраняем только нужную часть
+            _configManager.SavePartialConfiguration(keysType, newItems);
         }
 
         private CheckBox CreateCheckboxControl(KeyItem item)
@@ -99,7 +138,7 @@ namespace TvDataExport
             if (_lastRightClickedCheckBox.Tag is KeyItem item)
             {
                 checkboxItems.Remove(item); // Удаляем из списка
-                flowLayoutPanel1.Controls.Remove(_lastRightClickedCheckBox); // Удаляем с формы
+                flowLayoutPanelIni.Controls.Remove(_lastRightClickedCheckBox); // Удаляем с формы
                 _lastRightClickedCheckBox.Dispose();
                 _lastRightClickedCheckBox = null;
             }
@@ -112,7 +151,6 @@ namespace TvDataExport
 
         private void btnReload_Click(object sender, EventArgs e)
         {
-            flowLayoutPanel1.Controls.Clear();
             LoadCheckboxes();
         }
 
@@ -135,7 +173,7 @@ namespace TvDataExport
             checkboxItems.Add(newItem);
 
             var cb = CreateCheckboxControl(newItem);
-            flowLayoutPanel1.Controls.Add(cb);
+            flowLayoutPanelIni.Controls.Add(cb);
 
             txtNewItem.Clear();
         }

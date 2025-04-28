@@ -17,7 +17,7 @@ namespace TvDataExport
             ConfigManager configManager = new ConfigManager();
             Config = configManager.GetConfiguration();
 
-            if (Config.KeysToExport == null)
+            if (Config.IniKeysToExport == null)
             {
                 configManager.InitConfiguration();
                 Config = configManager.GetConfiguration();
@@ -36,7 +36,7 @@ namespace TvDataExport
             folderBrowserDialog1.ShowDialog();
             textBox1.Text = folderBrowserDialog1.SelectedPath;
         }
-        void DisplayMessage(AccountEventArgs accountEventArgs)
+        void DisplayMessage(ExportEventArgs accountEventArgs)
         {
             if (accountEventArgs.Type == ManagerEventType.Message)
                 progressBar1.Increment(1);
@@ -59,10 +59,10 @@ namespace TvDataExport
             if (exportPanelRadioButton.Checked)
                 ExportManager.ConvertJsonPanelToXls(textBox1.Text);
             if (exportModelRadioButton.Checked)
-                ExportManager.ConvertJsonModelToXls(textBox1.Text);
+                ExportManager.ConvertJsonModelToXls_NEW(textBox1.Text);
         }
 
-        private void ErrorMessage(AccountEventArgs accountEventArgs)
+        private void ErrorMessage(ExportEventArgs accountEventArgs)
         {
             if (accountEventArgs.Type == ManagerEventType.Error)
             {

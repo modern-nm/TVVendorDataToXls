@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TvDataExport.Shared;
 
@@ -20,7 +21,6 @@ public class ConfigManager
     {
         JsonSerializerOptions p_readOptions = new()
         {
-            //PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseUpper,
             WriteIndented = true
         };
 
@@ -40,7 +40,9 @@ public class ConfigManager
         try
         {
             string text = File.ReadAllText(path);
-            config.KeysToExport = JsonSerializer.Deserialize<List<KeyItem>>(text, p_readOptions);
+            var keys = JsonSerializer.Deserialize<Dictionary<KeysType,List<KeyItem>>>(text, p_readOptions);
+            config.IniKeysToExport = keys[KeysType.Ini];
+            config.ModelKeysToExport = keys[KeysType.Model];
         }
         catch (Exception)
         {
@@ -50,9 +52,44 @@ public class ConfigManager
 
         return config;
     }
-    public void SaveConfiguration()
+    public void SaveConfiguration(Config config)
     {
+        var keysToExport = new Dictionary<KeysType, List<KeyItem>>
+        {
+            [KeysType.Ini] = config.IniKeysToExport,
+            [KeysType.Model] = config.ModelKeysToExport
+        };
 
+        var text = JsonSerializer.Serialize(keysToExport, new JsonSerializerOptions() { WriteIndented = true });
+        File.WriteAllText(KeysToExportFilename, text);
+    }
+    public void SavePartialConfiguration(KeysType keysType, List<KeyItem> updatedList)
+    {
+        Dictionary<KeysType, List<KeyItem>> keysToExport;
+
+        if (File.Exists(KeysToExportFilename))
+        {
+            // Читаем существующий файл
+            var text = File.ReadAllText(KeysToExportFilename);
+            keysToExport = JsonSerializer.Deserialize<Dictionary<KeysType, List<KeyItem>>>(text)
+                           ?? new Dictionary<KeysType, List<KeyItem>>();
+        }
+        else
+        {
+            // Если файла нет — создаём новый
+            keysToExport = new Dictionary<KeysType, List<KeyItem>>();
+        }
+
+        // Обновляем только нужный раздел
+        keysToExport[keysType] = updatedList;
+
+        // Сохраняем весь файл заново
+        var outputText = JsonSerializer.Serialize(keysToExport, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+
+        File.WriteAllText(KeysToExportFilename, outputText);
     }
     public void InitConfiguration()
     {
@@ -64,7 +101,8 @@ public class ConfigManager
 	                        </appSettings>
                         </configuration>";
         File.WriteAllText(ConfigFilename, text);
-        List<string> keys = new List<string>()
+
+        List<string> iniKeys = new List<string>()
         {
             "FILENAME",
             "PROJECT_NAME",
@@ -83,15 +121,40 @@ public class ConfigManager
             "CLIENT_TYPE",
             "PowerLogoPath"
         };
-        var keysToExport = new List<KeyItem>();
-        foreach (var key in keys) 
+        List<string> modelKeys = new()
         {
-            keysToExport.Add(new() { Label = key, IsChecked = true });
-        }
+            "PANEL",
+            "SOURCE_SUPPORT",
+            "HARDWARE_SUPPORT",
+            "AMP_CHIPS",
+            "DEMOD",
+            "CLIENT_TYPE",
+            "PROJECT_NAME",
+            "PROJECT_VERSION",
+            "RCU_TYPE ",
+            "PSU_TYPE",
+            "MANUFACTURER_NAME",
+            "CHASSIS_NAME",
+            "LOGO_PATH"
+
+        };
+        var keysToExport = new Dictionary<KeysType, List<KeyItem>>
+        {
+            [KeysType.Ini] = iniKeys.Select(label => new KeyItem { Label = label, IsChecked = true }).ToList(),
+            [KeysType.Model] = modelKeys.Select(label => new KeyItem { Label = label, IsChecked = true }).ToList()
+        };
 
         text = JsonSerializer.Serialize(keysToExport, new JsonSerializerOptions() { WriteIndented = true });
         File.WriteAllText(KeysToExportFilename, text);
     }
+
+
+}
+public enum KeysType
+{
+    Model,
+    Panel,
+    Ini,
 }
 
 

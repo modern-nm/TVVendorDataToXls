@@ -1,17 +1,19 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using TvDataExport.Shared;
+using TvExportRefactoredJson;
 
 namespace TvVendorDataToXls
 {
     public class TvDataExportManager
     {
         private readonly Config Config;
-        public delegate void AccountHandler(AccountEventArgs accountEventArgs);
+        public delegate void AccountHandler(ExportEventArgs accountEventArgs);
         public event AccountHandler? Notify;
 
         public string DirectoryPath = "";
@@ -87,8 +89,8 @@ namespace TvVendorDataToXls
         public List<string> GetKeylist()
         {
             List<string> result = new();
-            if (Config.KeysToExport != null)
-                foreach (var item in Config.KeysToExport)
+            if (Config.IniKeysToExport != null)
+                foreach (var item in Config.IniKeysToExport)
                 {
                     if (item.IsChecked)
                         result.Add(item.Label);
@@ -109,111 +111,104 @@ namespace TvVendorDataToXls
                 var pairs = ParseIniFile(fi.FullName);
                 pairs.First().Value.Add("FILENAME", CutPanelFilename(fi.Name));
                 pairsList.Add(pairs);
-                Notify?.Invoke(new AccountEventArgs("", ManagerEventType.Message));
+                Notify?.Invoke(new ExportEventArgs("", ManagerEventType.Message));
             }
             WriteIniDataToXls(pairsList);
-
-
         }
 
         private void WriteIniDataToXls(List<Dictionary<string, Dictionary<string, string>>> pairsList)
         {
             var keyList = GetKeylist();
-            if (Config.KeysToExport != null)
-            {
+            if (Config.IniKeysToExport == null)
+                return;
 #if DEBUG
-                foreach (var item in pairsList) //list
+            foreach (var item in pairsList) //list
+            {
+                foreach (var pair in item) // [Ini]
                 {
-                    foreach (var pair in item) // [Ini]
+                    foreach (var pair1 in pair.Value)
                     {
-                        foreach (var pair1 in pair.Value)
-                        {
-                            if (keyList.Contains(pair1.Key))
-                                Console.WriteLine($"{pair1.Key} = {pair1.Value}");
-                        }
+                        if (keyList.Contains(pair1.Key))
+                            Console.WriteLine($"{pair1.Key} = {pair1.Value}");
                     }
-                }
-#endif
-                string filePath = Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_ini_data.xlsx");
-                using (SpreadsheetDocument document = SpreadsheetDocument.Create(filePath, SpreadsheetDocumentType.Workbook))
-                {
-                    WorkbookPart workbookPart = document.AddWorkbookPart();
-                    workbookPart.Workbook = new Workbook();
-
-                    WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
-                    var sheetData = new SheetData();
-                    worksheetPart.Worksheet = new Worksheet(sheetData);
-
-                    Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
-                    Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
-
-                    sheets.Append(sheet);
-
-                    Row headerRow = new Row();
-
-                    List<String> columns = new List<string>();
-
-                    foreach (var key in Config.KeysToExport) // шапка
-                    {
-                        columns.Add(key.Label);
-                        Cell cell = new Cell();
-                        cell.DataType = CellValues.String;
-                        cell.CellValue = new CellValue(key.Label);
-                        headerRow.AppendChild(cell);
-                    }
-                    sheetData.AppendChild(headerRow);
-
-                    foreach (var item in pairsList) //list
-                    {
-                        Row row = new Row();
-                        foreach (var col in columns)
-                        {
-                            bool keyFound = false;
-                            foreach (var pair in item) // [Ini]
-                            {
-                                foreach (var pair1 in pair.Value)
-                                {
-                                    if (col == pair1.Key)
-                                    {
-                                        keyFound = true;
-                                        Cell cell = new Cell();
-                                        cell.DataType = CellValues.String;
-                                        try
-                                        {
-                                            var propValue = pair1.Value;
-
-                                            if (propValue != null)
-                                            {
-                                                cell.CellValue = new CellValue(pair1.Value);
-                                            }
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            cell.CellValue = new CellValue("ERROR");
-                                            Console.WriteLine($" value is null");
-                                        }
-                                        row.AppendChild(cell);
-
-                                    }
-                                }
-                            }
-                            if (!keyFound)
-                            {
-                                Cell cell = new Cell();
-                                cell.DataType = CellValues.String;
-                                cell.CellValue = new CellValue("NOT FOUND");
-                                row.AppendChild(cell);
-                            }    
-                            
-                        }
-                        sheetData.AppendChild(row);
-                    }
-                    ///
-
-                    workbookPart.Workbook.Save();
                 }
             }
+#endif
+            string filePath = Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_ini_data.xlsx");
+            using (SpreadsheetDocument document = SpreadsheetDocument.Create(filePath, SpreadsheetDocumentType.Workbook))
+            {
+                WorkbookPart workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Workbook();
 
+                WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                worksheetPart.Worksheet = new Worksheet(sheetData);
+
+                Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
+                Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
+
+                sheets.Append(sheet);
+
+                Row headerRow = new Row();
+
+                List<String> columns = new List<string>();
+
+                foreach (var key in Config.IniKeysToExport) // шапка
+                {
+                    columns.Add(key.Label);
+                    Cell cell = new Cell();
+                    cell.DataType = CellValues.String;
+                    cell.CellValue = new CellValue(key.Label);
+                    headerRow.AppendChild(cell);
+                }
+                sheetData.AppendChild(headerRow);
+
+                foreach (var item in pairsList) //list
+                {
+                    Row row = new Row();
+                    foreach (var col in columns)
+                    {
+                        bool keyFound = false;
+                        foreach (var pair in item) // [Ini]
+                        {
+                            foreach (var pair1 in pair.Value)
+                            {
+                                if (col == pair1.Key)
+                                {
+                                    keyFound = true;
+                                    Cell cell = new Cell();
+                                    cell.DataType = CellValues.String;
+                                    try
+                                    {
+                                        var propValue = pair1.Value;
+
+                                        if (propValue != null)
+                                        {
+                                            cell.CellValue = new CellValue(pair1.Value);
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        cell.CellValue = new CellValue("ERROR");
+                                        Console.WriteLine($" value is null");
+                                    }
+                                    row.AppendChild(cell);
+
+                                }
+                            }
+                        }
+                        if (!keyFound)
+                        {
+                            Cell cell = new Cell();
+                            cell.DataType = CellValues.String;
+                            cell.CellValue = new CellValue("NOT FOUND");
+                            row.AppendChild(cell);
+                        }    
+                    }
+                    sheetData.AppendChild(row);
+                }
+                workbookPart.Workbook.Save();
+            }
         }
 
         Dictionary<string, Dictionary<string, string>> ParseIniFile(string filePath)
@@ -306,9 +301,9 @@ namespace TvVendorDataToXls
                     exceptions.Add(e);
                     exceptionFiles.Add(fi.FullName);
                     Console.WriteLine($"{fi.FullName}........{e.Message}");
-                    Notify?.Invoke(new AccountEventArgs($"{fi.FullName}........{e.Message}", ManagerEventType.Error));
+                    Notify?.Invoke(new ExportEventArgs($"{fi.FullName}........{e.Message}", ManagerEventType.Error));
                 }
-                Notify?.Invoke(new AccountEventArgs("", ManagerEventType.Message));
+                Notify?.Invoke(new ExportEventArgs("", ManagerEventType.Message));
             }
             WritePanelXls(tvInfoList);
             Console.ForegroundColor = ConsoleColor.Red;
@@ -321,6 +316,70 @@ namespace TvVendorDataToXls
             Console.ResetColor();
         }
 
+        public void ConvertJsonModelToXls_NEW(string path)
+        {
+            DirectoryPath = path;
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            List<Exception> exceptions = new List<Exception>();
+            List<string> exceptionFiles = new List<string>();
+
+            List<Root> tvModelInfoList = new List<Root>();
+            DirectoryInfo di = new DirectoryInfo(path);
+            var exportRows = new List<Dictionary<string, string>>();
+
+            foreach (var fi in di.GetFiles())
+            {
+                if (!CheckFileExt(fi.Extension, Config.FileExtsToProcess))
+                    continue;
+                try
+                {
+                    string json= ReadFile(path: fi.FullName);
+                    Root data = JsonSerializer.Deserialize<Root>(json, options);
+
+                    var extracted = new List<Dictionary<string, string>>();
+                    extracted.AddRange(ExcelExporter.Extract(data.Products));
+                    extracted.AddRange(ExcelExporter.Extract(data.Drives));
+                    extracted.AddRange(ExcelExporter.Extract(data.Tvos));
+                    extracted.AddRange(ExcelExporter.Extract(data.Apps));
+
+                    var merged = ExcelExporter.Merge(extracted);
+                    merged["Filename"] = Path.GetFileNameWithoutExtension(fi.Name); // Имя файла как дополнительная колонка
+
+                    exportRows.Add(merged);
+
+                    Console.WriteLine($"Processed: {fi.Name}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing {fi.Name}: {ex.Message}");
+                    exceptions.Add(ex);
+                    exceptionFiles.Add(fi.FullName);
+                    Notify?.Invoke(new ExportEventArgs($"{fi.FullName}........{ex.Message}", ManagerEventType.Error, ex));
+                }
+                Notify?.Invoke(new ExportEventArgs("", ManagerEventType.Message));
+            }
+
+            if (exportRows.Count > 0)
+            {
+                var allKeys = exportRows.SelectMany(d => d.Keys).Distinct().ToList();
+
+                ExcelExporter.ExportToExcel(
+                    exportRows,
+                    "full_model_data.xlsx",
+                    row => row,
+                    allKeys
+                );
+
+                Console.WriteLine("Exported full_model_data.xlsx");
+            }
+            else
+            {
+                Console.WriteLine("No valid models found to export.");
+            }
+        }
+
+        [Obsolete(message: "gospodi da eto je gavno, kto eto nashcodil")]
         public void ConvertJsonModelToXls(string path)
         {
             DirectoryPath = path;
@@ -367,17 +426,15 @@ namespace TvVendorDataToXls
                     exceptions.Add(e);
                     exceptionFiles.Add(fi.FullName);
                     Console.WriteLine($"{fi.FullName}........{e.Message}");
-                    Notify?.Invoke(new AccountEventArgs($"{fi.FullName}........{e.Message}", ManagerEventType.Error));
+                    Notify?.Invoke(new ExportEventArgs($"{fi.FullName}........{e.Message}", ManagerEventType.Error));
                 }
-                Notify?.Invoke(new AccountEventArgs("", ManagerEventType.Message));
+                Notify?.Invoke(new ExportEventArgs("", ManagerEventType.Message));
             }
             WriteModelXls(tvModelInfoList);
             Console.ForegroundColor = ConsoleColor.Red;
             foreach (var ef in exceptionFiles)
             {
-
                 Console.WriteLine($"ERROR during processing file {ef}");
-
             }
             Console.ResetColor();
         }
@@ -658,16 +715,16 @@ namespace TvVendorDataToXls
         }
     }
 
-    public class AccountEventArgs
+    public class ExportEventArgs
     {
-        // Сообщение
         public string Message { get; }
-        // Сумма, на которую изменился счет
         public ManagerEventType Type { get; }
-        public AccountEventArgs(string message, ManagerEventType type)
+        public Exception? Exception { get; }
+        public ExportEventArgs(string message, ManagerEventType type, Exception? ex = null)
         {
             Message = message;
             Type = type;
+            Exception = ex;
         }
     }
 
@@ -676,7 +733,7 @@ namespace TvVendorDataToXls
         Error = 0,
         Message = 1
     }
-
+    #region PanelClasses
     public class PanelInfo
     {
         public string Filename { get; set; }
@@ -706,7 +763,8 @@ namespace TvVendorDataToXls
         public int Step { get; set; }
     }
 
-
+    #endregion
+    #region ModelClasses
     public class Products
     {
         [ExportToXls(true)]
@@ -732,6 +790,9 @@ namespace TvVendorDataToXls
         public string LOGO_PATH { get; set; }
 
         public int LOGO_BRIGHTER { get; set; }
+
+        private HashSet<string> selected = new() {};
+        public bool ShouldProcess(string propertyName) => selected.Contains(propertyName);
     }
 
     public class Demod
@@ -794,7 +855,7 @@ namespace TvVendorDataToXls
         [ExportToXls(true)]
         public string PANEL { get; set; }
     }
-
+    #endregion
     class ExportToXlsAttribute : Attribute
     {
         public bool ToExport { get; set; }
