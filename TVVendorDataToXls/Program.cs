@@ -1,4 +1,4 @@
-﻿using TvVendorDataToXls;
+﻿using TvVendorDataToXls.ExportManager;
 
 public class Program
 {
@@ -7,7 +7,7 @@ public class Program
 
     public static void Main(string[] args)
     {
-        TvDataExportManager tvExport = new TvDataExportManager();
+        ExportManager tvExport = new ExportManager();
 
         if (args.Length == 0)
         {

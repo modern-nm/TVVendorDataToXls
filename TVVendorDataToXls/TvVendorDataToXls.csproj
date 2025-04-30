@@ -13,12 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ExportIni\" />
-    <Folder Include="ExportJsonModel\" />
-    <Folder Include="ExportJsonPanel\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ConfigManager\TvDataExport.Shared.csproj" />
   </ItemGroup>
 

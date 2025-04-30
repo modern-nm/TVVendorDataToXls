@@ -1,7 +1,7 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
-using TvVendorDataToXls;
 using TvDataExport.Shared;
+using TvVendorDataToXls.ExportManager;
 
 namespace TvDataExport
 {
@@ -43,7 +43,7 @@ namespace TvDataExport
         }
         private void exportButton_Click(object sender, EventArgs e)
         {
-            TvVendorDataToXls.TvDataExportManager ExportManager = new();
+            ExportManager ExportManager = new();
             progressBar1.Value = 0;
             progressBar1.Maximum = ExportManager.GetFilesCount(textBox1.Text);
             ExportManager.Notify += DisplayMessage;

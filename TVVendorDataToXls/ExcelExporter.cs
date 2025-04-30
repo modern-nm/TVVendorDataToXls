@@ -7,7 +7,7 @@ using System.Text.Json;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using TvVendorDataToXls;
+using TvVendorDataToXls.ExportManager;
 
 namespace TvExportRefactoredJson
 {
