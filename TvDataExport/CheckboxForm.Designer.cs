@@ -36,12 +36,12 @@
             btnAdd = new Button();
             contextMenuStrip1 = new ContextMenuStrip(components);
             removeToolStripMenuItem = new ToolStripMenuItem();
-            TabControlSettings = new TabControl();
+            tabControlSettings = new TabControl();
             tabPageIni = new TabPage();
             tabPageModel = new TabPage();
             flowLayoutPanelModel = new FlowLayoutPanel();
             contextMenuStrip1.SuspendLayout();
-            TabControlSettings.SuspendLayout();
+            tabControlSettings.SuspendLayout();
             tabPageIni.SuspendLayout();
             tabPageModel.SuspendLayout();
             SuspendLayout();
@@ -110,14 +110,14 @@
             // 
             // TabControlSettings
             // 
-            TabControlSettings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            TabControlSettings.Controls.Add(tabPageIni);
-            TabControlSettings.Controls.Add(tabPageModel);
-            TabControlSettings.Location = new Point(36, 70);
-            TabControlSettings.Name = "TabControlSettings";
-            TabControlSettings.SelectedIndex = 0;
-            TabControlSettings.Size = new Size(262, 360);
-            TabControlSettings.TabIndex = 5;
+            tabControlSettings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControlSettings.Controls.Add(tabPageIni);
+            tabControlSettings.Controls.Add(tabPageModel);
+            tabControlSettings.Location = new Point(36, 70);
+            tabControlSettings.Name = "TabControlSettings";
+            tabControlSettings.SelectedIndex = 0;
+            tabControlSettings.Size = new Size(262, 360);
+            tabControlSettings.TabIndex = 5;
             // 
             // tabPageIni
             // 
@@ -157,14 +157,14 @@
             ClientSize = new Size(339, 483);
             Controls.Add(btnSave);
             Controls.Add(btnAdd);
-            Controls.Add(TabControlSettings);
+            Controls.Add(tabControlSettings);
             Controls.Add(btnReload);
             Controls.Add(txtNewItem);
             MinimumSize = new Size(355, 522);
             Name = "CheckboxForm";
             Text = "Settings";
             contextMenuStrip1.ResumeLayout(false);
-            TabControlSettings.ResumeLayout(false);
+            tabControlSettings.ResumeLayout(false);
             tabPageIni.ResumeLayout(false);
             tabPageModel.ResumeLayout(false);
             ResumeLayout(false);
@@ -180,7 +180,7 @@
         private Button btnAdd;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem removeToolStripMenuItem;
-        private TabControl TabControlSettings;
+        private TabControl tabControlSettings;
         private TabPage tabPageIni;
         private TabPage tabPageModel;
         private FlowLayoutPanel flowLayoutPanelModel;

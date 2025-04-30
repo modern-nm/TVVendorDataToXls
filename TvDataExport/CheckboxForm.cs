@@ -35,9 +35,9 @@ namespace TvDataExport
         {
             _config = _configManager.GetConfiguration();
 
-            if (TabControlSettings.SelectedTab == tabPageIni)
+            if (tabControlSettings.SelectedTab == tabPageIni)
                 ReloadFlow(flowLayoutPanelIni, _config.IniKeysToExport);
-            if (TabControlSettings.SelectedTab == tabPageModel)
+            if (tabControlSettings.SelectedTab == tabPageModel)
                 ReloadFlow(flowLayoutPanelModel, _config.ModelKeysToExport);
         }
         private void ReloadFlow(FlowLayoutPanel panel, List<KeyItem> items)
@@ -69,12 +69,12 @@ namespace TvDataExport
             FlowLayoutPanel panelToUse = null;
             KeysType keysType;
 
-            if (TabControlSettings.SelectedTab == tabPageIni)
+            if (tabControlSettings.SelectedTab == tabPageIni)
             {
                 panelToUse = flowLayoutPanelIni;
                 keysType = KeysType.Ini;
             }
-            else if (TabControlSettings.SelectedTab == tabPageModel)
+            else if (tabControlSettings.SelectedTab == tabPageModel)
             {
                 panelToUse = flowLayoutPanelModel;
                 keysType = KeysType.Model;
@@ -173,7 +173,10 @@ namespace TvDataExport
             checkboxItems.Add(newItem);
 
             var cb = CreateCheckboxControl(newItem);
-            flowLayoutPanelIni.Controls.Add(cb);
+            if ( tabControlSettings.SelectedTab == tabPageIni)
+                flowLayoutPanelIni.Controls.Add(cb);
+            else if (tabControlSettings.SelectedTab == tabPageModel)
+                flowLayoutPanelModel.Controls.Add(cb);
 
             txtNewItem.Clear();
         }
