@@ -18,6 +18,15 @@ namespace TvDataExport.Shared
             IniKeysToExport = new List<KeyItem>();
             ModelKeysToExport = new List<KeyItem>();
         }
+
+        public bool IsModelKeyExportable(string key) =>
+            IsKeyExportable(ModelKeysToExport, key);
+
+        public bool IsIniKeyExportable(string key) =>
+            IsKeyExportable(IniKeysToExport, key);
+
+        private static bool IsKeyExportable(List<KeyItem> keyList, string key) =>
+            keyList.Any(item => item.Label.ToLower() == key.ToLower() && item.IsChecked == true);
     }
 
 

@@ -7,6 +7,7 @@ using System.Text.Json;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using TvDataExport.Shared;
 using TvVendorDataToXls.ExportManager;
 
 namespace TvExportRefactoredJson
@@ -84,16 +85,20 @@ namespace TvExportRefactoredJson
                 .ToList();
         }
 
-        public static Dictionary<string, string> ExtractExportableValues(object obj)
+        public static Dictionary<string, string> ExtractExportableValues(object obj, Config config)
         {
             var dict = new Dictionary<string, string>();
             var props = obj.GetType().GetProperties();
 
             foreach (var prop in props)
             {
-                var attr = prop.GetCustomAttribute<ExportToXlsAttribute>();
-                if (attr?.ToExport != true)
+                //var attr = prop.GetCustomAttribute<ExportToXlsAttribute>();
+                //if (attr?.ToExport != true)
+                //    continue;
+
+                if (!config.IsModelKeyExportable(prop.Name))
                     continue;
+
 
                 var value = prop.GetValue(obj);
 
@@ -137,7 +142,7 @@ namespace TvExportRefactoredJson
                         else
                         {
                             // Попробуем рекурсивно пройти вложенный объект
-                            var nested = ExtractExportableValues(value);
+                            var nested = ExtractExportableValues(value, config);
                             foreach (var kv in nested)
                                 dict[$"{prop.Name}.{kv.Key}"] = kv.Value;
                         }
@@ -148,9 +153,9 @@ namespace TvExportRefactoredJson
             return dict;
         }
 
-        public static List<Dictionary<string, string>> Extract<T>(T obj)
+        public static List<Dictionary<string, string>> Extract<T>(T obj, Config config)
         {
-            return new List<Dictionary<string, string>> { ExtractExportableValues(obj) };
+            return new List<Dictionary<string, string>> { ExtractExportableValues(obj, config) };
         }
 
         public static Dictionary<string, string> Merge(List<Dictionary<string, string>> dicts)

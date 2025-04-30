@@ -170,10 +170,10 @@ namespace TvVendorDataToXls.ExportManager
                     Root data = JsonSerializer.Deserialize<Root>(json, options);
 
                     var extracted = new List<Dictionary<string, string>>();
-                    extracted.AddRange(ExcelExporter.Extract(data.Products));
-                    extracted.AddRange(ExcelExporter.Extract(data.Drives));
-                    extracted.AddRange(ExcelExporter.Extract(data.Tvos));
-                    extracted.AddRange(ExcelExporter.Extract(data.Apps));
+                    extracted.AddRange(ExcelExporter.Extract(data.Products, Config));
+                    extracted.AddRange(ExcelExporter.Extract(data.Drives, Config));
+                    extracted.AddRange(ExcelExporter.Extract(data.Tvos, Config));
+                    extracted.AddRange(ExcelExporter.Extract(data.Apps, Config));
 
                     var merged = ExcelExporter.Merge(extracted);
                     merged["Filename"] = Path.GetFileNameWithoutExtension(fi.Name); // Имя файла как дополнительная колонка
@@ -198,7 +198,7 @@ namespace TvVendorDataToXls.ExportManager
 
                 ExcelExporter.ExportToExcel(
                     exportRows,
-                    "full_model_data.xlsx",
+                    Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_model_data.xlsx"),
                     row => row,
                     allKeys
                 );
