@@ -104,17 +104,17 @@
             // removeToolStripMenuItem
             // 
             removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            removeToolStripMenuItem.Size = new Size(118, 22);
+            removeToolStripMenuItem.Size = new Size(180, 22);
             removeToolStripMenuItem.Text = "Удалить";
             removeToolStripMenuItem.Click += RemoveToolStripMenuItem_Click;
             // 
-            // TabControlSettings
+            // tabControlSettings
             // 
             tabControlSettings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControlSettings.Controls.Add(tabPageIni);
             tabControlSettings.Controls.Add(tabPageModel);
             tabControlSettings.Location = new Point(36, 70);
-            tabControlSettings.Name = "TabControlSettings";
+            tabControlSettings.Name = "tabControlSettings";
             tabControlSettings.SelectedIndex = 0;
             tabControlSettings.Size = new Size(262, 360);
             tabControlSettings.TabIndex = 5;

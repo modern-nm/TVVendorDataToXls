@@ -50,7 +50,8 @@ namespace TvDataExport
                 {
                     Text = item.Label,
                     Checked = item.IsChecked,
-                    Tag = item
+                    Tag = item,
+                    ContextMenuStrip = contextMenuStrip1
                 };
 
                 cb.CheckedChanged += (s, e) =>
@@ -58,7 +59,7 @@ namespace TvDataExport
                     if (cb.Tag is KeyItem checkboxItem)
                         checkboxItem.IsChecked = cb.Checked;
                 };
-
+                cb.MouseUp += CheckBox_MouseUp;
                 panel.Controls.Add(cb);
             }
         }
@@ -173,7 +174,7 @@ namespace TvDataExport
             checkboxItems.Add(newItem);
 
             var cb = CreateCheckboxControl(newItem);
-            if ( tabControlSettings.SelectedTab == tabPageIni)
+            if (tabControlSettings.SelectedTab == tabPageIni)
                 flowLayoutPanelIni.Controls.Add(cb);
             else if (tabControlSettings.SelectedTab == tabPageModel)
                 flowLayoutPanelModel.Controls.Add(cb);
