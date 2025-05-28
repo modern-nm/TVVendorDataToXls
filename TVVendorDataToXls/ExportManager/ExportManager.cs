@@ -170,6 +170,7 @@ namespace TvVendorDataToXls.ExportManager
                     Root data = JsonSerializer.Deserialize<Root>(json, options);
 
                     var extracted = new List<Dictionary<string, string>>();
+                    extracted.AddRange(ExcelExporter.Extract(data, Config));
                     extracted.AddRange(ExcelExporter.Extract(data.Products, Config));
                     extracted.AddRange(ExcelExporter.Extract(data.Drives, Config));
                     extracted.AddRange(ExcelExporter.Extract(data.Tvos, Config));
