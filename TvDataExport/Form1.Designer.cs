@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             exportButton = new Button();
             textBox1 = new TextBox();
             pathButton = new Button();
@@ -39,11 +40,14 @@
             logRichTextBox = new RichTextBox();
             progressBar1 = new ProgressBar();
             button1 = new Button();
+            button2 = new Button();
+            label1 = new Label();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // exportButton
             // 
+            exportButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             exportButton.Location = new Point(347, 410);
             exportButton.Name = "exportButton";
             exportButton.Size = new Size(456, 95);
@@ -54,6 +58,7 @@
             // 
             // textBox1
             // 
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBox1.Location = new Point(347, 176);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
@@ -64,6 +69,7 @@
             // pathButton
             // 
             pathButton.AccessibleName = "";
+            pathButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pathButton.Location = new Point(693, 175);
             pathButton.Name = "pathButton";
             pathButton.Size = new Size(110, 24);
@@ -118,15 +124,16 @@
             // 
             // logRichTextBox
             // 
-            logRichTextBox.Dock = DockStyle.Left;
-            logRichTextBox.Location = new Point(0, 0);
+            logRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            logRichTextBox.Location = new Point(12, 81);
             logRichTextBox.Name = "logRichTextBox";
-            logRichTextBox.Size = new Size(296, 517);
+            logRichTextBox.Size = new Size(284, 424);
             logRichTextBox.TabIndex = 3;
             logRichTextBox.Text = "";
             // 
             // progressBar1
             // 
+            progressBar1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             progressBar1.Location = new Point(347, 357);
             progressBar1.Name = "progressBar1";
             progressBar1.Size = new Size(456, 23);
@@ -134,7 +141,8 @@
             // 
             // button1
             // 
-            button1.Location = new Point(890, 59);
+            button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button1.Location = new Point(728, 59);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 6;
@@ -142,11 +150,33 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // button2
+            // 
+            button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            button2.Location = new Point(758, 88);
+            button2.Name = "button2";
+            button2.Size = new Size(45, 23);
+            button2.TabIndex = 7;
+            button2.Text = "Help";
+            button2.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label1.Location = new Point(12, 53);
+            label1.Name = "label1";
+            label1.Size = new Size(43, 25);
+            label1.TabIndex = 8;
+            label1.Text = "Log";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1060, 517);
+            ClientSize = new Size(881, 517);
+            Controls.Add(label1);
+            Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(progressBar1);
             Controls.Add(logRichTextBox);
@@ -154,6 +184,7 @@
             Controls.Add(pathButton);
             Controls.Add(textBox1);
             Controls.Add(exportButton);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             SizeGripStyle = SizeGripStyle.Show;
             Text = "TvDataExport";
@@ -175,5 +206,7 @@
         private RichTextBox logRichTextBox;
         private ProgressBar progressBar1;
         private Button button1;
+        private Button button2;
+        private Label label1;
     }
 }

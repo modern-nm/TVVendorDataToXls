@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace TvDataExport.Shared;
@@ -43,6 +44,7 @@ public class ConfigManager
             var keys = JsonSerializer.Deserialize<Dictionary<KeysType,List<KeyItem>>>(text, p_readOptions);
             config.IniKeysToExport = keys[KeysType.Ini];
             config.ModelKeysToExport = keys[KeysType.Model];
+            config.PanelKeysToExport = keys[KeysType.Panel];
         }
         catch (Exception)
         {
@@ -57,7 +59,8 @@ public class ConfigManager
         var keysToExport = new Dictionary<KeysType, List<KeyItem>>
         {
             [KeysType.Ini] = config.IniKeysToExport,
-            [KeysType.Model] = config.ModelKeysToExport
+            [KeysType.Model] = config.ModelKeysToExport,
+            [KeysType.Panel] = config.PanelKeysToExport
         };
 
         var text = JsonSerializer.Serialize(keysToExport, new JsonSerializerOptions() { WriteIndented = true });
@@ -138,10 +141,17 @@ public class ConfigManager
             "LOGO_PATH"
 
         };
+        List<string> panelKeys = new()
+        {
+            "NAME",
+            "PANEL_PARAM"
+
+        };
         var keysToExport = new Dictionary<KeysType, List<KeyItem>>
         {
             [KeysType.Ini] = iniKeys.Select(label => new KeyItem { Label = label, IsChecked = true }).ToList(),
-            [KeysType.Model] = modelKeys.Select(label => new KeyItem { Label = label, IsChecked = true }).ToList()
+            [KeysType.Model] = modelKeys.Select(label => new KeyItem { Label = label, IsChecked = true }).ToList(),
+            [KeysType.Panel] = panelKeys.Select(label => new KeyItem { Label = label, IsChecked = true }).ToList()
         };
 
         text = JsonSerializer.Serialize(keysToExport, new JsonSerializerOptions() { WriteIndented = true });

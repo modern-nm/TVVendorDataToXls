@@ -30,6 +30,7 @@ namespace TvDataExport
             _config = _configManager.GetConfiguration();
             ReloadFlow(flowLayoutPanelIni, _config.IniKeysToExport);
             ReloadFlow(flowLayoutPanelModel, _config.ModelKeysToExport);
+            ReloadFlow(flowLayoutPanelPanel, _config.PanelKeysToExport);
         }
         private void LoadCheckboxes()
         {
@@ -39,6 +40,8 @@ namespace TvDataExport
                 ReloadFlow(flowLayoutPanelIni, _config.IniKeysToExport);
             if (tabControlSettings.SelectedTab == tabPageModel)
                 ReloadFlow(flowLayoutPanelModel, _config.ModelKeysToExport);
+            if (tabControlSettings.SelectedTab == tabPagePanel)
+                ReloadFlow(flowLayoutPanelPanel, _config.PanelKeysToExport);
         }
         private void ReloadFlow(FlowLayoutPanel panel, List<KeyItem> items)
         {
@@ -79,6 +82,11 @@ namespace TvDataExport
             {
                 panelToUse = flowLayoutPanelModel;
                 keysType = KeysType.Model;
+            }
+            else if (tabControlSettings.SelectedTab == tabPagePanel)
+            {
+                panelToUse = flowLayoutPanelPanel;
+                keysType = KeysType.Panel;
             }
             else
             {
@@ -178,8 +186,17 @@ namespace TvDataExport
                 flowLayoutPanelIni.Controls.Add(cb);
             else if (tabControlSettings.SelectedTab == tabPageModel)
                 flowLayoutPanelModel.Controls.Add(cb);
+            else if (tabControlSettings.SelectedTab == tabPagePanel)
+                flowLayoutPanelPanel.Controls.Add(cb);
+            else
+            {
+                // Неподдерживаемая вкладка
+            }
+
+
 
             txtNewItem.Clear();
+            Console.WriteLine();
         }
     }
 }

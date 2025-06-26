@@ -57,7 +57,7 @@ namespace TvDataExport
                 ExportManager.ConvertIniToXls(textBox1.Text);
             }
             if (exportPanelRadioButton.Checked)
-                ExportManager.ConvertJsonPanelToXls(textBox1.Text);
+                ExportManager.ConvertJsonPanelToXls_NEW(textBox1.Text);
             if (exportModelRadioButton.Checked)
                 ExportManager.ConvertJsonModelToXls_NEW(textBox1.Text);
         }

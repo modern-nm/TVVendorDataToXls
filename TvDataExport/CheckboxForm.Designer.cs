@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CheckboxForm));
             flowLayoutPanelIni = new FlowLayoutPanel();
             btnSave = new Button();
             btnReload = new Button();
@@ -40,10 +41,13 @@
             tabPageIni = new TabPage();
             tabPageModel = new TabPage();
             flowLayoutPanelModel = new FlowLayoutPanel();
+            tabPagePanel = new TabPage();
+            flowLayoutPanelPanel = new FlowLayoutPanel();
             contextMenuStrip1.SuspendLayout();
             tabControlSettings.SuspendLayout();
             tabPageIni.SuspendLayout();
             tabPageModel.SuspendLayout();
+            tabPagePanel.SuspendLayout();
             SuspendLayout();
             // 
             // flowLayoutPanelIni
@@ -104,7 +108,7 @@
             // removeToolStripMenuItem
             // 
             removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            removeToolStripMenuItem.Size = new Size(180, 22);
+            removeToolStripMenuItem.Size = new Size(118, 22);
             removeToolStripMenuItem.Text = "Удалить";
             removeToolStripMenuItem.Click += RemoveToolStripMenuItem_Click;
             // 
@@ -113,6 +117,7 @@
             tabControlSettings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControlSettings.Controls.Add(tabPageIni);
             tabControlSettings.Controls.Add(tabPageModel);
+            tabControlSettings.Controls.Add(tabPagePanel);
             tabControlSettings.Location = new Point(36, 70);
             tabControlSettings.Name = "tabControlSettings";
             tabControlSettings.SelectedIndex = 0;
@@ -150,6 +155,25 @@
             flowLayoutPanelModel.Size = new Size(248, 326);
             flowLayoutPanelModel.TabIndex = 5;
             // 
+            // tabPagePanel
+            // 
+            tabPagePanel.Controls.Add(flowLayoutPanelPanel);
+            tabPagePanel.Location = new Point(4, 24);
+            tabPagePanel.Name = "tabPagePanel";
+            tabPagePanel.Padding = new Padding(3);
+            tabPagePanel.Size = new Size(254, 332);
+            tabPagePanel.TabIndex = 3;
+            tabPagePanel.Text = "Panel settings";
+            tabPagePanel.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanelPanel
+            // 
+            flowLayoutPanelPanel.Dock = DockStyle.Fill;
+            flowLayoutPanelPanel.Location = new Point(3, 3);
+            flowLayoutPanelPanel.Name = "flowLayoutPanelPanel";
+            flowLayoutPanelPanel.Size = new Size(248, 326);
+            flowLayoutPanelPanel.TabIndex = 0;
+            // 
             // CheckboxForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -160,6 +184,7 @@
             Controls.Add(tabControlSettings);
             Controls.Add(btnReload);
             Controls.Add(txtNewItem);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(355, 522);
             Name = "CheckboxForm";
             Text = "Settings";
@@ -167,6 +192,7 @@
             tabControlSettings.ResumeLayout(false);
             tabPageIni.ResumeLayout(false);
             tabPageModel.ResumeLayout(false);
+            tabPagePanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -184,5 +210,7 @@
         private TabPage tabPageIni;
         private TabPage tabPageModel;
         private FlowLayoutPanel flowLayoutPanelModel;
+        private TabPage tabPagePanel;
+        private FlowLayoutPanel flowLayoutPanelPanel;
     }
 }

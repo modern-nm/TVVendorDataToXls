@@ -2,8 +2,6 @@
 
 public class Program
 {
-    //private static List<string>? keysToBeExported;
-    //private static readonly string ExtsToProcess = ".ini";
 
     public static void Main(string[] args)
     {
@@ -21,13 +19,11 @@ public class Program
         else
         {
             if (args.Contains("--model"))
-                //tvExport.ConvertJsonModelToXls(args[0]);
                 tvExport.ConvertJsonModelToXls_NEW(args[0]);
                 if (args.Contains("--panel"))
-                tvExport.ConvertJsonPanelToXls(args[0]);
+                tvExport.ConvertJsonPanelToXls_NEW(args[0]);
             if (args.Contains("--ini"))
             {
-                //tvExport.GetKeysToBeExported();
                 tvExport.ConvertIniToXls(args[0]);
             }
 

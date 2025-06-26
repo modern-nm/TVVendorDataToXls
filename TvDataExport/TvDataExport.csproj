@@ -3,11 +3,16 @@
   <PropertyGroup>
 	<Version>1.0.0</Version>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>modern.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="modern.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ConfigManager\TvDataExport.Shared.csproj" />

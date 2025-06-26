@@ -1,7 +1,6 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -99,45 +98,111 @@ namespace TvVendorDataToXls.ExportManager
         }
 
 
+//        [Obsolete(message: "gospodi da eto je gavno, kto eto nashcodil")]
+//        public void ConvertJsonPanelToXls(string path)
+//        {
+//            DirectoryPath = path;
+//            List<Exception> exceptions = new List<Exception>();
+//            List<string> exceptionFiles = new List<string>();
 
-        public void ConvertJsonPanelToXls(string path)
+//            List<PanelInfo> tvInfoList = new List<PanelInfo>();
+//            DirectoryInfo di = new DirectoryInfo(path);
+//            foreach (var fi in di.GetFiles())
+//            {
+//                if (!CheckFileExt(fi.Extension, Config.FileExtsToProcess))
+//                    continue;
+//                var jsonString = ReadFile(path: fi.FullName);
+//                try
+//                {
+//                    PanelInfo? tvInfo = JsonSerializer.Deserialize<PanelInfo>(jsonString, p_readOptions);
+
+//                    if (tvInfo != null)
+//                    {
+//                        tvInfo.Filename = CutPanelFilename(fi.Name);
+//                        tvInfo.PanelParam = CutPanelParam(tvInfo.PanelParam);
+//#if DEBUG
+//                        Console.WriteLine($"{nameof(tvInfo.Name)}: {tvInfo.Name}");
+//                        Console.WriteLine($"{nameof(tvInfo.PanelParam)}: {tvInfo.PanelParam}");
+//#endif
+//                        tvInfoList.Add(tvInfo);
+//                    }
+//                }
+//                catch (Exception e)
+//                {
+//                    exceptions.Add(e);
+//                    exceptionFiles.Add(fi.FullName);
+//                    Console.WriteLine($"{fi.FullName}........{e.Message}");
+//                    Notify?.Invoke(new ExportEventArgs($"{fi.FullName}........{e.Message}", ManagerEventType.Error));
+//                }
+//                Notify?.Invoke(new ExportEventArgs("", ManagerEventType.Message));
+//            }
+//            WritePanelXls(tvInfoList);
+//            Console.ForegroundColor = ConsoleColor.Red;
+//            foreach (var ef in exceptionFiles)
+//            {
+
+//                Console.WriteLine($"ERROR during processing file {ef}");
+
+//            }
+//            Console.ResetColor();
+//        }
+
+        public void ConvertJsonPanelToXls_NEW(string path)
         {
             DirectoryPath = path;
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
             List<Exception> exceptions = new List<Exception>();
             List<string> exceptionFiles = new List<string>();
 
-            List<PanelInfo> tvInfoList = new List<PanelInfo>();
             DirectoryInfo di = new DirectoryInfo(path);
+            var exportRows = new List<Dictionary<string, string>>();
+
             foreach (var fi in di.GetFiles())
             {
                 if (!CheckFileExt(fi.Extension, Config.FileExtsToProcess))
                     continue;
-                var jsonString = ReadFile(path: fi.FullName);
                 try
                 {
-                    PanelInfo? tvInfo = JsonSerializer.Deserialize<PanelInfo>(jsonString, p_readOptions);
+                    string json = ReadFile(path: fi.FullName);
+                    PanelInfo data = JsonSerializer.Deserialize<PanelInfo>(json, options);
 
-                    if (tvInfo != null)
-                    {
-                        tvInfo.Filename = CutPanelFilename(fi.Name);
-                        tvInfo.PanelParam = CutPanelParam(tvInfo.PanelParam);
-#if DEBUG
-                        Console.WriteLine($"{nameof(tvInfo.Name)}: {tvInfo.Name}");
-                        Console.WriteLine($"{nameof(tvInfo.PanelParam)}: {tvInfo.PanelParam}");
-#endif
-                        tvInfoList.Add(tvInfo);
-                    }
+                    var extracted = new List<Dictionary<string, string>>();
+                    extracted.AddRange(ExcelExporter.Extract(data, Config, KeysType.Panel));
+
+                    var merged = ExcelExporter.Merge(extracted);
+                    merged["Filename"] = Path.GetFileNameWithoutExtension(fi.Name); // Имя файла как дополнительная колонка
+
+                    exportRows.Add(merged);
+
+                    Console.WriteLine($"Processed: {fi.Name}");
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    exceptions.Add(e);
+                    Console.WriteLine($"Error processing {fi.Name}: {ex.Message}");
+                    exceptions.Add(ex);
                     exceptionFiles.Add(fi.FullName);
-                    Console.WriteLine($"{fi.FullName}........{e.Message}");
-                    Notify?.Invoke(new ExportEventArgs($"{fi.FullName}........{e.Message}", ManagerEventType.Error));
+                    Notify?.Invoke(new ExportEventArgs($"{fi.FullName}........{ex.Message}", ManagerEventType.Error, ex));
                 }
                 Notify?.Invoke(new ExportEventArgs("", ManagerEventType.Message));
             }
-            WritePanelXls(tvInfoList);
+            if (exportRows.Count > 0)
+            {
+                var allKeys = exportRows.SelectMany(d => d.Keys).Distinct().ToList();
+
+                ExcelExporter.ExportToExcel(
+                    exportRows,
+                    Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_model_data.xlsx"),
+                    row => row,
+                    allKeys
+                );
+
+                Console.WriteLine("Exported full_model_data.xlsx");
+            }
+            else
+            {
+                Console.WriteLine("No valid models found to export.");
+            }
             Console.ForegroundColor = ConsoleColor.Red;
             foreach (var ef in exceptionFiles)
             {
@@ -170,11 +235,11 @@ namespace TvVendorDataToXls.ExportManager
                     Root data = JsonSerializer.Deserialize<Root>(json, options);
 
                     var extracted = new List<Dictionary<string, string>>();
-                    extracted.AddRange(ExcelExporter.Extract(data, Config));
-                    extracted.AddRange(ExcelExporter.Extract(data.Products, Config));
-                    extracted.AddRange(ExcelExporter.Extract(data.Drives, Config));
-                    extracted.AddRange(ExcelExporter.Extract(data.Tvos, Config));
-                    extracted.AddRange(ExcelExporter.Extract(data.Apps, Config));
+                    extracted.AddRange(ExcelExporter.Extract(data, Config, KeysType.Model));
+                    extracted.AddRange(ExcelExporter.Extract(data.Products, Config, KeysType.Model));
+                    extracted.AddRange(ExcelExporter.Extract(data.Drives, Config, KeysType.Model));
+                    extracted.AddRange(ExcelExporter.Extract(data.Tvos, Config, KeysType.Model));
+                    extracted.AddRange(ExcelExporter.Extract(data.Apps, Config, KeysType.Model));
 
                     var merged = ExcelExporter.Merge(extracted);
                     merged["Filename"] = Path.GetFileNameWithoutExtension(fi.Name); // Имя файла как дополнительная колонка
@@ -271,7 +336,7 @@ namespace TvVendorDataToXls.ExportManager
             }
             Console.ResetColor();
         }
-
+        [Obsolete(message: "never used")]
         private void WritePanelXls(List<PanelInfo> tvInfoList)
         {
             string filePath = Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_panel_data.xlsx");
@@ -337,6 +402,7 @@ namespace TvVendorDataToXls.ExportManager
                 workbookPart.Workbook.Save();
             }
         }
+        [Obsolete(message: "never used")]
         private void WriteModelXls(List<Root> tvInfoList)
         {
             string filePath = Path.Combine(DirectoryPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}_model_data.xlsx");
@@ -569,9 +635,9 @@ namespace TvVendorDataToXls.ExportManager
     #region PanelClasses
     public class PanelInfo
     {
-        public string Filename { get; set; }
-        public string Name { get; set; }                // NAME
-        public string PanelParam { get; set; }          // PANEL_PARAM
+        //public string Filename { get; set; }
+        public string NAME { get; set; }                // NAME
+        public string PANEL_PARAM { get; set; }          // PANEL_PARAM
         /*public string PanelExtend { get; set; }         // PANEL_EXTEND
         public int PanelSize { get; set; }              // PANEL_SIZE
         public int PanelFrequency { get; set; }         // PANEL_FREQUENCY
@@ -600,26 +666,17 @@ namespace TvVendorDataToXls.ExportManager
     #region ModelClasses
     public class Products
     {
-        [ExportToXls(true)]
         public string CLIENT_TYPE { get; set; }
 
-        [ExportToXls(true)]
         public string PROJECT_NAME { get; set; }
-
-        [ExportToXls(true)]
         public string PROJECT_VERSION { get; set; }
 
-        [ExportToXls(true)]
         public string RCU_TYPE { get; set; }
-        [ExportToXls(true)]
         public string PSU_TYPE { get; set; }
 
-        [ExportToXls(true)]
         public string MANUFACTURER_NAME { get; set; }
 
-        [ExportToXls(true)]
         public string CHASSIS_NAME { get; set; }
-        [ExportToXls(true)]
         public string LOGO_PATH { get; set; }
 
         public int LOGO_BRIGHTER { get; set; }
@@ -636,17 +693,14 @@ namespace TvVendorDataToXls.ExportManager
 
     public class Drives
     {
-        [ExportToXls(true)]
         public List<Dictionary<string, object>> AMP_CHIPS { get; set; }
         public string DSP_COEF_PATH { get; set; }
-
-        [ExportToXls(true)]
         public List<Dictionary<string, Demod>> DEMOD { get; set; }
     }
 
     public class Tvos
     {
-        public string DATABASE_USER_DEFAULT { get; set; }
+        public string DATABASE_USER_DEFAULT { get; set; } = default;
         public string DATABASE_SATELLITE_DEFAULT { get; set; }
         public string DATABASE_DTV_CONFIG { get; set; }
         public List<int> VIDEO_MUTE_COLOR { get; set; }
@@ -663,9 +717,7 @@ namespace TvVendorDataToXls.ExportManager
 
     public class Apps
     {
-        [ExportToXls(true)]
         public Dictionary<string, string> SOURCE_SUPPORT { get; set; }
-        [ExportToXls(true)]
         public List<string> HARDWARE_SUPPORT { get; set; }
         public List<string> COUNTRY { get; set; }
         public List<string> LANGUAGE { get; set; }
@@ -677,15 +729,12 @@ namespace TvVendorDataToXls.ExportManager
 
     public class Root
     {
-        [ExportToXls(true)]
         public string Filename { get; set; }
         public Products Products { get; set; }
         public Drives Drives { get; set; }
         public Tvos Tvos { get; set; } // Changed from "Tvos" to singular for C# naming conventions
         public Apps Apps { get; set; }
         public string SOC { get; set; }
-
-        [ExportToXls(true)]
         public string PANEL { get; set; }
     }
     #endregion

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using DocumentFormat.OpenXml;
@@ -85,7 +81,7 @@ namespace TvExportRefactoredJson
                 .ToList();
         }
 
-        public static Dictionary<string, string> ExtractExportableValues(object obj, Config config)
+        public static Dictionary<string, string> ExtractExportableValues(object obj, Config config, KeysType keysType)
         {
             var dict = new Dictionary<string, string>();
             var props = obj.GetType().GetProperties();
@@ -95,9 +91,15 @@ namespace TvExportRefactoredJson
                 //var attr = prop.GetCustomAttribute<ExportToXlsAttribute>();
                 //if (attr?.ToExport != true)
                 //    continue;
-
-                if (!config.IsModelKeyExportable(prop.Name))
-                    continue;
+                if (keysType == KeysType.Model)
+                    if (!config.IsModelKeyExportable(prop.Name))
+                        continue;
+                if (keysType == KeysType.Panel)
+                    if (!config.IsPanelKeyExportable(prop.Name))
+                        continue;
+                if (keysType == KeysType.Ini)
+                    if (!config.IsIniKeyExportable(prop.Name))
+                        continue;
 
 
                 var value = prop.GetValue(obj);
@@ -142,7 +144,7 @@ namespace TvExportRefactoredJson
                         else
                         {
                             // Попробуем рекурсивно пройти вложенный объект
-                            var nested = ExtractExportableValues(value, config);
+                            var nested = ExtractExportableValues(value, config, keysType);
                             foreach (var kv in nested)
                                 dict[$"{prop.Name}.{kv.Key}"] = kv.Value;
                         }
@@ -153,9 +155,9 @@ namespace TvExportRefactoredJson
             return dict;
         }
 
-        public static List<Dictionary<string, string>> Extract<T>(T obj, Config config)
+        public static List<Dictionary<string, string>> Extract<T>(T obj, Config config, KeysType keysType)
         {
-            return new List<Dictionary<string, string>> { ExtractExportableValues(obj, config) };
+            return new List<Dictionary<string, string>> { ExtractExportableValues(obj, config, keysType) };
         }
 
         public static Dictionary<string, string> Merge(List<Dictionary<string, string>> dicts)
