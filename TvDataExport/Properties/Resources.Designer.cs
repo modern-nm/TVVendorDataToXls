@@ -59,5 +59,15 @@ namespace TvDataExport.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Logo_of_the_TCL_Corporation_svg {
+            get {
+                object obj = ResourceManager.GetObject("Logo_of_the_TCL_Corporation.svg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

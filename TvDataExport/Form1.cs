@@ -75,5 +75,22 @@ namespace TvDataExport
             var form = new CheckboxForm();
             form.ShowDialog(); // Открывает в отдельном окне
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string url = "https://github.com/modern-nm/TVVendorDataToXls";
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true // обязательно для .NET Core / .NET 5+
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Не удалось открыть ссылку: " + ex.Message);
+            }
+        }
     }
 }

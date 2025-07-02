@@ -42,15 +42,17 @@
             button1 = new Button();
             button2 = new Button();
             label1 = new Label();
+            pictureBox1 = new PictureBox();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // exportButton
             // 
             exportButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            exportButton.Location = new Point(347, 410);
+            exportButton.Location = new Point(347, 351);
             exportButton.Name = "exportButton";
-            exportButton.Size = new Size(456, 95);
+            exportButton.Size = new Size(359, 95);
             exportButton.TabIndex = 1;
             exportButton.Text = "Export";
             exportButton.UseVisualStyleBackColor = true;
@@ -59,10 +61,10 @@
             // textBox1
             // 
             textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBox1.Location = new Point(347, 176);
+            textBox1.Location = new Point(347, 238);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
-            textBox1.Size = new Size(326, 23);
+            textBox1.Size = new Size(229, 23);
             textBox1.TabIndex = 2;
             textBox1.TextChanged += textBox1_TextChanged;
             // 
@@ -70,7 +72,7 @@
             // 
             pathButton.AccessibleName = "";
             pathButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pathButton.Location = new Point(693, 175);
+            pathButton.Location = new Point(596, 237);
             pathButton.Name = "pathButton";
             pathButton.Size = new Size(110, 24);
             pathButton.TabIndex = 3;
@@ -80,12 +82,13 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(exportIniRadioButton);
             groupBox1.Controls.Add(exportPanelRadioButton);
             groupBox1.Controls.Add(exportModelRadioButton);
-            groupBox1.Location = new Point(431, 59);
+            groupBox1.Location = new Point(347, 121);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(200, 100);
+            groupBox1.Size = new Size(229, 100);
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
             groupBox1.Text = "Choose option";
@@ -125,24 +128,24 @@
             // logRichTextBox
             // 
             logRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            logRichTextBox.Location = new Point(12, 81);
+            logRichTextBox.Location = new Point(12, 37);
             logRichTextBox.Name = "logRichTextBox";
-            logRichTextBox.Size = new Size(284, 424);
+            logRichTextBox.Size = new Size(284, 512);
             logRichTextBox.TabIndex = 3;
             logRichTextBox.Text = "";
             // 
             // progressBar1
             // 
             progressBar1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            progressBar1.Location = new Point(347, 357);
+            progressBar1.Location = new Point(347, 298);
             progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(456, 23);
+            progressBar1.Size = new Size(359, 23);
             progressBar1.TabIndex = 5;
             // 
             // button1
             // 
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button1.Location = new Point(728, 59);
+            button1.Location = new Point(631, 139);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 6;
@@ -153,28 +156,40 @@
             // button2
             // 
             button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button2.Location = new Point(758, 88);
+            button2.Location = new Point(631, 168);
             button2.Name = "button2";
-            button2.Size = new Size(45, 23);
+            button2.Size = new Size(75, 23);
             button2.TabIndex = 7;
             button2.Text = "Help";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label1.Location = new Point(12, 53);
+            label1.Location = new Point(12, 9);
             label1.Name = "label1";
             label1.Size = new Size(43, 25);
             label1.TabIndex = 8;
             label1.Text = "Log";
             // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = Properties.Resources.Logo_of_the_TCL_Corporation_svg;
+            pictureBox1.Location = new Point(347, 37);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(103, 65);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 9;
+            pictureBox1.TabStop = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(881, 517);
+            ClientSize = new Size(784, 561);
+            Controls.Add(pictureBox1);
             Controls.Add(label1);
             Controls.Add(button2);
             Controls.Add(button1);
@@ -185,11 +200,13 @@
             Controls.Add(textBox1);
             Controls.Add(exportButton);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MinimumSize = new Size(700, 500);
             Name = "Form1";
             SizeGripStyle = SizeGripStyle.Show;
             Text = "TvDataExport";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -208,5 +225,6 @@
         private Button button1;
         private Button button2;
         private Label label1;
+        private PictureBox pictureBox1;
     }
 }
